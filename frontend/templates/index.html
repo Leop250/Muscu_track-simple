@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MuscuTrack</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; background: #f5f5f7; color: #1d1d1f; }
+    h1 { margin-bottom: 0.25rem; }
+    form.ajout { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; background: #fff; padding: 1rem; border-radius: 8px; }
+    label { display: flex; flex-direction: column; font-size: 0.85rem; gap: 0.25rem; }
+    input, button { padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; }
+    button { background: #1d1d1f; color: #fff; border: none; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; background: #fff; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 0.6rem; text-align: left; border-bottom: 1px solid #eee; }
+    td form button { background: #c0392b; padding: 0.3rem 0.6rem; font-size: 0.85rem; }
+    .erreur { background: #fdecea; color: #c0392b; padding: 0.75rem; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>MuscuTrack</h1>
+  <p>Suivi de mes séances de musculation</p>
+
+  {% if erreur %}
+  <p class="erreur">{{ erreur }}</p>
+  {% endif %}
+
+  <form class="ajout" method="post" action="/ajouter">
+    <label>Exercice <input name="exercice" required maxlength="100" placeholder="Squat"></label>
+    <label>Séries <input name="series" type="number" min="1" value="3" required></label>
+    <label>Répétitions <input name="repetitions" type="number" min="1" value="10" required></label>
+    <label>Poids (kg) <input name="poids" type="number" min="0" step="0.5" value="20" required></label>
+    <label>Date <input name="jour" type="date" value="{{ aujourdhui }}" required></label>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Exercice</th><th>Séries × Rép.</th><th>Poids</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for s in seances %}
+      <tr>
+        <td>{{ s.jour }}</td>
+        <td>{{ s.exercice }}</td>
+        <td>{{ s.series }} × {{ s.repetitions }}</td>
+        <td>{{ s.poids }} kg</td>
+        <td>
+          <form method="post" action="/supprimer/{{ s.id }}">
+            <button type="submit">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5">Aucune séance pour le moment.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
