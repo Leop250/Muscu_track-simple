@@ -1,4 +1,3 @@
-gitignore
 # Secrets : on ne versionne que le modèle
 .env
 !.env.example
