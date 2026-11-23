@@ -4,19 +4,21 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import String, create_engine, select
+from sqlalchemy import URL, String, create_engine, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 
-def database_url() -> str:
+def database_url() -> str | URL:
     if "DATABASE_URL" in os.environ:
         return os.environ["DATABASE_URL"]
-    user = os.environ["POSTGRES_USER"]
-    password = os.environ["POSTGRES_PASSWORD"]
-    host = os.environ.get("POSTGRES_HOST", "db")
-    port = os.environ.get("POSTGRES_PORT", "5432")
-    name = os.environ["POSTGRES_DB"]
-    return f"postgresql+psycopg://{user}:{password}@{host}:{port}/{name}"
+    return URL.create(
+        "postgresql+psycopg",
+        username=os.environ["POSTGRES_USER"],
+        password=os.environ["POSTGRES_PASSWORD"],
+        host=os.environ.get("POSTGRES_HOST", "db"),
+        port=int(os.environ.get("POSTGRES_PORT", "5432")),
+        database=os.environ["POSTGRES_DB"],
+    )
 
 
 engine = create_engine(database_url())
