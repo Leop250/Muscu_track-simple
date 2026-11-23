@@ -1,0 +1,14 @@
+gitignore
+# Secrets : on ne versionne que le modèle
+.env
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Mac / éditeurs
+.DS_Store
+.vscode/
